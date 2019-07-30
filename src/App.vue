@@ -39,6 +39,7 @@ export default {
 
 <style>
 body {
+  min-width: 1400px;
   margin: 0;
   background: #ececec;
 }
