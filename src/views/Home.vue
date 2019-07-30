@@ -5,7 +5,7 @@
       <div class="banner__import">
         <i class="el-icon-wallet"></i>
         <br />
-        <el-button>导入账号</el-button>
+        <el-button @click="dialogFormVisible2 = true">导入账号</el-button>
       </div>
     </section>
 
@@ -27,7 +27,7 @@
     </section>
 
     <el-dialog title="创建账户" :visible.sync="dialogFormVisible">
-      <el-form :model="form" :rules="rules" ref="ruleForm" label-width="80px" label-position="left">
+      <el-form :model="form" :rules="rules" ref="ruleForm" :status-icon="true" label-width="80px" label-position="left">
         <el-form-item label="账户名称" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -40,12 +40,41 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="create('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
 
-    
+    <el-dialog title="导入账户" :visible.sync="dialogFormVisible2">
+      <el-form :model="form">
+        <el-radio v-model="importCheck" label="1" border>私钥</el-radio>
+        <el-radio v-model="importCheck" label="2" border>助记词</el-radio>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible2 = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible2 = false, dialogFormVisible3 = true">确 定</el-button>
+      </div>
+    </el-dialog>
 
+    <el-dialog title="导入账户" :visible.sync="dialogFormVisible3">
+      <el-form :model="importData" :rules="importRules" ref="importRules" :status-icon="true" label-width="80px" label-position="left">
+        <el-form-item :label="importCheck == '1' ? '私钥' : '助记词'" prop="key">
+          <el-input type="textarea" v-model="importData.key"></el-input>
+        </el-form-item>
+        <el-form-item label="账户名称" prop="name">
+          <el-input v-model="importData.name"></el-input>
+        </el-form-item>
+        <el-form-item label="设置密码" prop="pass">
+          <el-input type="password" v-model="importData.pass"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input type="password" v-model="importData.checkPass"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible3 = false">取 消</el-button>
+        <el-button type="primary" @click="importUser('importRules')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -62,9 +91,18 @@ export default {
         callback()
       }
     }
+    var validatePass2 = (rule, value, callback) => {
+       if (value !== this.importData.pass) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       users: [],
       loading: false,
+
+      /*** 创建账户相关数据 ***/
       dialogFormVisible: false,
       form: {
         name: '',
@@ -81,7 +119,32 @@ export default {
           { required: true, message: '请再次输入密码', trigger: 'blur' },
           { validator: validatePass, trigger: 'blur' }
         ]
+      },
+      /*** end ***/
+
+      /*** 导入账户相关数据 ***/
+      dialogFormVisible2: false,
+      dialogFormVisible3: false,
+      importCheck: '1',
+      importData: {
+        key: '',
+        name: '',
+        pass: '',
+        checkPass: ''
+      },
+      importRules: {
+        key: { required: true, message: '请输入key', trigger: 'blur' },
+        name: { required: true, message: '请输入账户名称', trigger: 'blur' },
+        pass: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 12, message: '密码6-12位', trigger: 'blur' },
+        ],
+        checkPass: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { validator: validatePass2, trigger: 'blur' }
+        ]
       }
+      /*** end ***/
     }
   },
   created() {
@@ -112,34 +175,12 @@ export default {
         }
       })
     },
-    submitForm(formName) {
+    create(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let wallet = ethers.Wallet.createRandom()
-          let obj = {
-            name: this.form.name,
-            pass: this.form.pass,
-            wallet
-          }
-
-          let walletCache = localStorage.getItem('wallet')
-          if (walletCache) {
-            let walletArr = JSON.parse(walletCache)
-            walletArr.push(obj)
-            localStorage.setItem('wallet', JSON.stringify(walletArr))
-          } else {
-            localStorage.setItem('wallet', JSON.stringify([obj]))
-          }
-
-          this.$notify({
-            title: '创建成功',
-            message: '秘钥：' + wallet.signingKey.privateKey,
-            type: 'success',
-            duration: 0
-          })
           this.dialogFormVisible = false
-          this.$refs[formName].resetFields()
-          this.getUsers()
+          this.save(this.form.name, this.form.pass, wallet, formName)
         }
       })
     },
@@ -162,6 +203,48 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    importUser(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let wallet
+          if (this.importCheck == '1') {
+            wallet = new ethers.Wallet(this.importData.key)
+          } else {
+            wallet = ethers.Wallet.fromMnemonic(this.importData.key)
+          }
+          this.dialogFormVisible3 = false
+          this.save(this.importData.name, this.importData.pass, wallet, formName)
+        }
+      })
+    },
+    save(name, pass, wallet, formName) {
+      let obj = {name, pass, wallet}
+      let walletCache = localStorage.getItem('wallet')
+      
+      if (walletCache) {
+        let walletArr = JSON.parse(walletCache)
+
+        let repeat = walletArr.find(i => i.wallet.signingKey.address == wallet.signingKey.address)
+        if (repeat) {
+          this.$message.error('账户重复')
+          return
+        }
+
+        walletArr.push(obj)
+        localStorage.setItem('wallet', JSON.stringify(walletArr))
+      } else {
+        localStorage.setItem('wallet', JSON.stringify([obj]))
+      }
+
+      this.$notify({
+        title: '创建成功',
+        message: '秘钥：' + wallet.signingKey.privateKey,
+        type: 'success',
+        duration: 0
+      })
+      this.getUsers()
+      this.$refs[formName].resetFields()
     }
   }
 };
@@ -289,6 +372,13 @@ export default {
     p {
       word-break: break-all;
     }
+  }
+}
+.el-dialog {
+  width: 550px !important;
+
+  &__body {
+    text-align: center;
   }
 }
 </style>
