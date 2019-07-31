@@ -278,8 +278,8 @@ export default {
   flex-wrap: wrap;
   align-content: space-around;
   width: 1350px;
-  margin: 100px auto 0;
-  padding: 0 15px;
+  margin: 100px auto 50px;
+  padding: 45px 15px 0;
 
   &__item {
     position: relative;
