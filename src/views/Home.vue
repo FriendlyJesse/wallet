@@ -16,7 +16,7 @@
         </div>
         <i @click="deleteUser(item.wallet.signingKey.address)" class="el-icon-delete"></i>
         <div class="user__name">{{item.name}}</div>
-        <div class="user__money">{{item.money}}</div>
+        <div class="user__money">{{item.money | accurate}}</div>
         <div class="user__token">ETH</div>
         <div class="user__address">{{item.wallet.signingKey.address}}</div>
       </div>
@@ -151,6 +151,11 @@ export default {
     // console.log(ethers)
     this.getUsers()
   },
+  filters: {
+    accurate(val) {
+      return Number(val).toFixed(3)
+    }
+  },
   methods: {
     getUsers() {
       this.users = []
@@ -161,7 +166,8 @@ export default {
 
       this.loading = true
       users.map(async (el, idx) => {
-        let provider = ethers.getDefaultProvider()
+        // let provider = ethers.getDefaultProvider()
+        let provider = new ethers.providers.JsonRpcProvider('https://ropsten.infura.io/v3/2d6036eb41204013a6bf8606be3e0931', 'ropsten')
         let privateKey = el.wallet.signingKey.privateKey
         let wallet = new ethers.Wallet(privateKey, provider)
 
