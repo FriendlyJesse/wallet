@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <el-menu :default-active="activeIndex" mode="horizontal" router>
+    <el-menu :default-active="$route.path" mode="horizontal" router>
       <el-menu-item v-for="(item, key) in routers" :key="key" :index="item.path">{{item.name}}</el-menu-item>
     </el-menu>
     <router-view />
@@ -13,7 +13,6 @@ export default {
   name: 'app',
   data() {
     return {
-      activeIndex: '/',
       routers: [
         {
           path: '/',
@@ -39,7 +38,6 @@ export default {
 
 <style>
 body {
-  min-width: 1400px;
   margin: 0;
   background: #ececec;
 }
