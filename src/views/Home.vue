@@ -1,13 +1,13 @@
 <template>
   <div class="home">
 
-    <section class="banner">
+    <v-banner>
       <div class="banner__import">
         <i class="el-icon-wallet"></i>
         <br />
         <el-button @click="dialogFormVisible2 = true">导入账号</el-button>
       </div>
-    </section>
+    </v-banner>
 
     <section class="user" v-loading="loading">
       <div v-for="(item, key) in users" :key="key" class="user__item">
@@ -79,10 +79,14 @@
 </template>
 
 <script>
-import { ethers } from "ethers";
+import vBanner from '../components/Banner'
+import { ethers } from 'ethers'
 
 export default {
-  name: "Home",
+  name: 'Home',
+  components: {
+    vBanner
+  },
   data() {
     var validatePass = (rule, value, callback) => {
        if (value !== this.form.pass) {
@@ -258,13 +262,6 @@ export default {
 
 <style lang="scss" scoped>
 .banner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 300px;
-  background: linear-gradient(to right, #302b61, #58559f);
-
   &__import {
     text-align: center;
 
