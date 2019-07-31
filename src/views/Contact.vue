@@ -136,8 +136,8 @@ export default {
   flex-wrap: wrap;
   align-content: space-around;
   width: 1350px;
-  margin: 0 auto;
-  padding: 100px 15px;
+  margin: 100px auto 0;
+  padding: 0 15px;
 
   &__item {
     position: relative;

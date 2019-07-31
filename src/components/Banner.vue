@@ -1,11 +1,7 @@
 <template>
-  <div class="setting">
-
-    <section class="banner">
-      <slot></slot>
-    </section>
-
-  </div>
+  <section class="banner">
+    <slot></slot>
+  </section>
 </template>
 
 <script>
