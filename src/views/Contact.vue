@@ -2,7 +2,7 @@
   <div class="contact">
     <v-banner>
       <div class="banner__text">
-        联系人
+        {{$t('contact')}}
       </div>
     </v-banner>
     
@@ -17,7 +17,7 @@
       </div>
       <div @click="dialogFormVisible = true" class="user__item add">
         <i class="el-icon-plus"></i>
-        <div>添加联系人</div>
+        <div>{{$t('newContact')}}</div>
       </div>
     </section>
 

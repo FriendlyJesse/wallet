@@ -5,7 +5,7 @@
       <div class="banner__import">
         <i class="el-icon-wallet"></i>
         <br />
-        <el-button @click="dialogFormVisible2 = true">导入账号</el-button>
+        <el-button @click="dialogFormVisible2 = true">{{$t('importAccount')}}</el-button>
       </div>
     </v-banner>
 
@@ -22,7 +22,7 @@
       </div>
       <div @click="dialogFormVisible = true" class="user__item add">
         <i class="el-icon-plus"></i>
-        <div>新建账号</div>
+        <div>{{$t('newAccount')}}</div>
       </div>
     </section>
 

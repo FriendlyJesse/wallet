@@ -1,3 +1,12 @@
 {
-  "message": "hello i18n !!"
+  "lang": "language",
+  "home": "Home",
+  "transfer": "Transfer",
+  "contact": "Contact",
+  "setting": "Setting",
+  "importAccount": "Import account",
+  "newAccount": "New account",
+  "newContact": "New contact",
+  "transferOut": "Transfer out",
+  "transferIn": "Transfer in"
 }

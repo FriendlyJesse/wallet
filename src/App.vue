@@ -13,22 +13,27 @@ export default {
   name: 'app',
   data() {
     return {
-      routers: [
+      
+    }
+  },
+  computed: {
+    routers() {
+      return [
         {
           path: '/',
-          name: '首页'
+          name: this.$t('home')
         },
         {
           path: '/transfer',
-          name: '转账'
+          name: this.$t('transfer')
         },
         {
           path: '/contact',
-          name: '联系人'
+          name: this.$t('contact')
         },
         {
           path: '/setting',
-          name: '设置'
+          name: this.$t('setting')
         }
       ]
     }

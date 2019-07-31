@@ -3,13 +3,13 @@
 
     <v-banner>
       <div class="banner__text">
-        设置
+        {{$t('setting')}}
       </div>
     </v-banner>
 
     <section class="select_lang">
-      语言
-      <el-select v-model="active" placeholder="请选择语言">
+      {{$t('lang')}}
+      <el-select v-model="active" @change="Language" placeholder="请选择语言">
         <el-option
           v-for="item in lang"
           :key="item.code"
@@ -40,9 +40,18 @@ export default {
         },
         {
           code: 'en',
-          name: '英文'
+          name: 'English'
         }
       ]
+    }
+  },
+  created() {
+    this.active = this.$i18n.locale
+  },
+  methods: {
+    Language() {
+      this.$i18n.locale = this.active
+      localStorage.setItem('lang', this.active)
     }
   }
 }

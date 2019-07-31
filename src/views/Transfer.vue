@@ -3,7 +3,7 @@
 
     <v-banner>
       <div class="banner__text">
-        转账
+        {{$t('transfer')}}
       </div>
     </v-banner>
     
@@ -77,7 +77,7 @@ export default {
     return {
       wallet: {},
       users: [],
-      contacts: [{ "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" }],
+      contacts: [],
       all: false,
       balance: '',
       loading: false,
